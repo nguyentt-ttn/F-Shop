@@ -1,0 +1,67 @@
+.product-form-container {
+    @apply min-h-screen bg-gradient-to-br from-gray-50 to-gray-100;
+  }
+  
+  .form-card {
+    @apply bg-white rounded-xl shadow-lg p-8 max-w-5xl mx-auto;
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  .form-title {
+    @apply text-3xl font-bold text-gray-800 mb-8 text-center;
+    background: linear-gradient(to right, #2563eb, #4f46e5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .form-section {
+    @apply space-y-6;
+  }
+  
+  .input-group {
+    @apply mb-4;
+  }
+  
+  .input-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+  
+  .custom-input {
+    @apply w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500;
+  }
+  
+  .variant-card {
+    @apply border border-gray-200 rounded-lg p-4 mb-4 hover:shadow-md transition-shadow duration-200;
+    background: linear-gradient(to bottom, #ffffff, #f9fafb);
+  }
+  
+  .color-row {
+    @apply flex items-center space-x-2 mb-2;
+  }
+  
+  .add-button {
+    @apply w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200;
+  }
+  
+  .remove-button {
+    @apply text-red-500 hover:text-red-700 transition-colors duration-200;
+  }
+  
+  .submit-button {
+    @apply w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg shadow-md hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200;
+  }
+  
+  .upload-area {
+    @apply border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-500 transition-colors duration-200;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }

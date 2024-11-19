@@ -1,0 +1,21 @@
+@keyframes slideAuth {
+  from {
+    opacity: 0;
+    transform: translateY(50px); /* Bắt đầu từ phía dưới */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0); /* Kết thúc tại vị trí ban đầu */
+  }
+}
+
+.slide-auth-animation {
+  animation: slideAuth 1.5s ease-out; /* Áp dụng animation */
+}
+
+.background-auth{
+    background-image: url('../../assets/images/Dashboard.png');
+    background-size: cover; /* Để hình nền phủ kín */
+    background-position: center; /* Căn giữa hình nền */
+    background-repeat: no-repeat; /* Không lặp lại */
+}
