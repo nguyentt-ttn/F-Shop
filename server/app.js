@@ -8,6 +8,7 @@ import 'dotenv/config';
 import attributeRouter from './routers/attribute';
 import productRouter from './routers/product';
 import cartRouter from './routers/cart';
+import invoiceRouter from './routers/invoice';
 
 const app = express()
 app.use(cors({
@@ -24,6 +25,7 @@ app.use("/api",authRouter)
 app.use("/api",categoryRouter)
 app.use("/api",attributeRouter)
 app.use("/api",cartRouter)
+app.use("/api", invoiceRouter)
 
 
 connectDB()
