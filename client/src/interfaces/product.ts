@@ -19,6 +19,7 @@
 
 export interface ProductVariant {
   _id: string;
+  productId: string;
   size: string;
   colors: {
     _id: string;

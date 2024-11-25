@@ -8,6 +8,7 @@ import {
 
 
 const Header = () => {
+  const userId = localStorage.getItem("userId");
   return (
     <header>
       <div className="max-w-6xl mx-auto p-2">
@@ -50,7 +51,7 @@ const Header = () => {
             <Link to="/wishlist">
               <AiOutlineHeart />
             </Link>
-            <Link to="/wishlist">
+            <Link to={`/cart/${userId}`}>
               <AiOutlineShoppingCart />
             </Link>
           </div>

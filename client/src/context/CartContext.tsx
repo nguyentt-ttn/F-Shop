@@ -1,135 +1,225 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createContext, ReactNode, useContext, useEffect, useReducer } from "react";
-import api from "../API";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { useQuery, useMutation, useQueryClient, UseQueryResult, UseMutationResult } from "@tanstack/react-query";
+import api from './../API/index';
+import { message } from 'antd';
 
-interface Product {
-    productId: string;
-    name: string;
-    price: number;
-    image_urls?: string;
-    quantity: number;
+interface CartItem {
+  _id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  size:string
+  color:string
 }
 
 interface CartContextType {
-    cart: Product[];
-    isCartLoading: boolean;
-    addItemMutation: any;
-    updateItemMutation: any;
-    removeItemMutation: any;
+  cart: CartItem[] | null;
+  isLoading: boolean;
+  error: Error | null;
+  addToCart: (product: CartItem) => void;
+  removeProduct: (product: CartItem) => void;
+  increaseQuantity: (product: CartItem) => void;
+  decreaseQuantity: (product: CartItem) => void;
+}
+
+interface CartProviderProps {
+  children: ReactNode;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-type CartAction =
-    | { type: "SET_CART"; payload: Product[] }
-    | { type: "ADD_TO_CART"; payload: Product }
-    | { type: "UPDATE_CART_ITEM"; payload: Product }
-    | { type: "REMOVE_FROM_CART"; payload: { productId: string } };
-
-const cartReducer = (state: Product[], action: CartAction): Product[] => {
-    switch (action.type) {
-        case "SET_CART":
-            return action.payload;
-        case "ADD_TO_CART":
-            return [...state, action.payload];
-        case "UPDATE_CART_ITEM":
-            return state.map((item) =>
-                item.productId === action.payload.productId ? action.payload : item
-            );
-        case "REMOVE_FROM_CART":
-            return state.filter((item) => item.productId !== action.payload.productId);
-        default:
-            return state;
-    }
-};
-
-interface CartProviderProps {
-    children: ReactNode;
-}
-
 export const CartProvider = ({ children }: CartProviderProps) => {
-    const [cart, dispatch] = useReducer(cartReducer, []);
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
+  const [userId, setUserId] = useState<string | null>(() => localStorage.getItem("userId"));
 
-    // Fetch cart data
-    const { data: cartData, isLoading: isCartLoading } = useQuery({
-        queryKey: ["cart"],
-        queryFn: async () => {
-            const response = await api.get("/cart");
-            return response.data;
-        },
-    });
+  useEffect(() => {
+    if (userId) {
+      localStorage.setItem("userId", userId); // Lưu userId vào localStorage khi có giá trị mới
+    }
+  }, [userId]);
 
-    // Add item to cart
-    const addItemMutation = useMutation({
-        mutationFn: async (item: Product) => {
-            const response = await api.post("/cart", item);
-            return response.data;
-        },
-        onSuccess: (data) => {
-            dispatch({ type: "ADD_TO_CART", payload: data });
-            queryClient.invalidateQueries({
-                queryKey: ["cart"],
-            });
-        },
-    });
+  // Lấy giỏ hàng từ API
+  const { data: cart, isLoading, error }: UseQueryResult<any, Error> = useQuery(
+    {
+      queryKey: ["cart", userId],  // Truyền queryKey trong đối tượng
+      queryFn: async () => {
+        if (!userId) throw new Error("User ID is not available");
+        const res = await api.get(`/cart/${userId}`);
+        return res.data;
+      },
+      enabled: !!userId, // Chỉ chạy khi userId tồn tại
+    }
+  );
 
-    // Update cart item
-    const updateItemMutation = useMutation({
-        mutationFn: async (item: Product) => {
-            const response = await api.put(
-                `/cart/${item.productId}`,
-                item
-            );
-            return response.data;
-        },
-        onSuccess: (data) => {
-            dispatch({ type: "UPDATE_CART_ITEM", payload: data });
-            queryClient.invalidateQueries({
-                queryKey: ["cart"],
-            });
-        },
-    });
+  // Mutation để thêm sản phẩm vào giỏ hàng
+  const addProductMutation = useMutation({
+    mutationFn: async (product: any) => {
+      if (!userId) throw new Error("User ID is not available");
+  
+      // Cập nhật thông tin thiếu cho sản phẩm
+      const dataToSend = {
+        productId: product._id,  // Đảm bảo rằng product.id tồn tại
+        userId: userId,          // userId lấy từ localStorage
+        size: product.size,      // Thêm size nếu có
+        color: product.color,    // Thêm color nếu có
+      };
+  
+      console.log("Data to send:", dataToSend);  // In ra dữ liệu trước khi gửi
+  
+      try {
+        const res = await api.post(`/cart/${userId}`, dataToSend);
+        return res.data;
+      } catch (err: any) {
+        console.error("Error from API:", err.response?.data || err.message);
+        message.error(`Lỗi: ${err.response?.data?.message || err.message}`);
+        throw new Error(err.response?.data?.message || err.message);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", userId] });
+      message.success("Sản phẩm đã được thêm vào giỏ hàng.");
+    },
+    onError: (error) => {
+      message.error(`Lỗi: ${error.message}`);
+    },
+  });
+  
+  // Mutation để xóa sản phẩm khỏi giỏ
+  const removeProductMutation = useMutation({
+    mutationFn: async ({ userId, productId, size, color }: { userId: string, productId: string, size: string, color: string }) => {
+      // Gửi yêu cầu DELETE đến API
+      const res = await api.delete(`/cart/remove`, {
+        data: { userId, productId, size, color }
+      });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", userId] });
+      message.success("Sản phẩm đã được xóa khỏi giỏ hàng.");
+    },
+    onError: (error) => {
+      message.error(`Lỗi: ${error.message}`);
+    },
+  });
+  
+  
+  
 
-    // Remove item from cart
-    const removeItemMutation = useMutation({
-        mutationFn: async (productId: string) => {
-            await api.delete(`/cart/${productId}`);
-            return productId;
-        },
-        onSuccess: (_, productId) => {
-            dispatch({ type: "REMOVE_FROM_CART", payload: { productId } });
-            queryClient.invalidateQueries({
-                queryKey: ["cart"],
-            });
-        },
-    });
+ // Mutation để tăng số lượng
+ const increaseQuantityMutation = useMutation({
+  mutationFn: async ({ _id, size, color }: CartItem) => {
+    if (!userId) throw new Error("User ID is not available");
 
-    useEffect(() => {
-        if (cartData) {
-            dispatch({ type: "SET_CART", payload: cartData });
-        }
-    }, [cartData]);
+    const res = await api.post(`/cart/increase`, { userId, productId: _id, size, color });
+    return res.data;
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({queryKey:["cart", userId]});
+    message.success("Số lượng sản phẩm đã được tăng.");
+  },
+  onError: (error: any) => {
+    message.error(`Lỗi: ${error.response?.data?.message || error.message}`);
+  },
+});
 
-    return (
-        <CartContext.Provider
-            value={{
-                cart,
-                isCartLoading,
-                addItemMutation,
-                updateItemMutation,
-                removeItemMutation,
-            }}
-        >
-            {children}
-        </CartContext.Provider>
-    );
+// Mutation để giảm số lượng
+const decreaseQuantityMutation = useMutation({
+  mutationFn: async ({ _id, size, color }: CartItem) => {
+    if (!userId) throw new Error("User ID is not available");
+
+    // Thay đổi phương thức từ `post` thành `patch`
+    const res = await api.patch(`/cart/decrease`, { userId, productId: _id, size, color });
+    return res.data;
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["cart", userId] });
+    message.success("Số lượng sản phẩm đã được giảm.");
+  },
+  onError: (error: any) => {
+    message.error(`Lỗi: ${error.response?.data?.message || error.message}`);
+  },
+});
+
+
+
+  // Các hàm xử lý
+  const addToCart = (product: CartItem) => {
+    if (userId) {
+      addProductMutation.mutate(product);
+    } else {
+      message.error("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
+    }
+  };
+
+  const removeProduct = (product: CartItem) => {
+    if (userId) {
+      // Kiểm tra nếu có size và color trong sản phẩm
+      if (product.size && product.color) {
+        // Gọi API để xóa sản phẩm khỏi giỏ hàng
+        removeProductMutation.mutate({
+          userId,
+          productId: product._id,
+          size: product.size,
+          color: product.color,
+        });
+      } else {
+        message.error("Sản phẩm không có đủ thông tin kích thước hoặc màu sắc.");
+      }
+    } else {
+      message.error("Bạn cần đăng nhập để xóa sản phẩm khỏi giỏ hàng.");
+    }
+  };
+  
+
+// Xử lý tăng số lượng
+const increaseQuantity = (product: CartItem) => {
+  if (!product._id || !product.size || !product.color) {
+    message.error("Thiếu thông tin cần thiết: productId, size, hoặc color.");
+    return;
+  }
+  increaseQuantityMutation.mutate(product);
 };
 
-export const useCart = () => {
-    const context = useContext(CartContext);
-    if (context === undefined) {
-        throw new Error("useCart must be used within a CartProvider");
-    }
-    return context;
+// Xử lý giảm số lượng
+const decreaseQuantity = (product: CartItem) => {
+  if (!product._id || !product.size || !product.color) {
+    message.error("Thiếu thông tin cần thiết: productId, size, hoặc color.");
+    return;
+  }
+
+  if (product.quantity > 1) {
+    // Giảm số lượng nếu quantity > 1
+    decreaseQuantityMutation.mutate(product);
+  } else if (product.quantity === 1) {
+    // Giảm số lượng xuống 0, không xóa sản phẩm mà chỉ giảm số lượng
+    decreaseQuantityMutation.mutate(product);
+  } else {
+    message.error("Sản phẩm có số lượng không hợp lệ.");
+  }
+};
+
+  return (
+    <CartContext.Provider
+      value={{
+        cart,
+        isLoading,
+        error,
+        addToCart,
+        removeProduct,
+        increaseQuantity,
+        decreaseQuantity,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
+};
+
+// Custom hook để sử dụng CartContext
+export const useCart = (): CartContextType => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error("useCart must be used within a CartProvider");
+  }
+  return context;
 };

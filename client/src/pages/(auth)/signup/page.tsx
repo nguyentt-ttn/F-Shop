@@ -1,37 +1,32 @@
-import { useMutation } from "@tanstack/react-query";
 import { Button, Checkbox, Form, Input, message } from "antd";
-import api from "../../../API";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, } from "react-router-dom";
 import { LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
-import '../auth.page.css'
-type FieldType = {
-  username?: string;
-  email: string;
-  password?: string;
-  confirmPassword?: string;
-};
+import "../auth.page.css";
+import { useAuth } from "../../../context/AuthContext";
+// type FieldType = {
+//   username?: string;
+//   email: string;
+//   password?: string;
+//   confirmPassword?: string;
+// };
 
 const SignupPage = () => {
-  const nav = useNavigate();
-  const [form] = Form.useForm();
-  const { mutate } = useMutation({
-    mutationFn: async (formData: FieldType) => {
-      const response = await api.post("/signup", formData);
-      return response.data;
-    },
-    onSuccess: () => {
-      nav("/sign-in");
-      message.success("Signup success!");
-      form.resetFields();
-    },
-    onError: (error: any) => {
-      console.log(error);
-      message.error(error.response.data.message || "Signup failed");
-    },
-  });
-
-  const onFinish = (values: FieldType) => {
-    mutate(values);
+  const { signup } = useAuth();
+  const onFinish = async (values: {
+    username: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
+    if (values.password !== values.confirmPassword) {
+      message.error("Mật khẩu và xác nhận mật khẩu không khớp!");
+      return;
+    }
+    try {
+      await signup(values);
+    } catch (error) {
+      message.error("Đăng ký không thành công!");
+    }
   };
 
   return (
@@ -50,7 +45,6 @@ const SignupPage = () => {
             initialValues={{ remember: true }}
             onFinish={onFinish}
             autoComplete="off"
-            form={form}
           >
             <Form.Item
               name="username"

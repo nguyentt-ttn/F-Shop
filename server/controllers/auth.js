@@ -88,11 +88,12 @@ export const signin = async (req, res) => {
 
     // Tạo token và trả về cho người dùng
     console.log("JWT Secret:", process.env.VITE_JWT_SECRET);
-    const token = jwt.sign({ _id: user._id }, process.env.VITE_JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id }, process.env.VITE_JWT_SECRET, {
       expiresIn: "1h",
     });
     // // Sanitize user object
     const sanitizedUser = {
+      userId: user._id,
       username: user.username,
       email: user.email,
       role: user.role,

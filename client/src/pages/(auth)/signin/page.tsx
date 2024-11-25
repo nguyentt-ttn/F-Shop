@@ -1,55 +1,64 @@
-import { useMutation } from "@tanstack/react-query";
 import { Button, Checkbox, Form, Input, message } from "antd";
-import api from "../../../API";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
-import { Link, useNavigate } from "react-router-dom";
+import { Link,  } from "react-router-dom";
 import '../auth.page.css'
-type FieldType = {
-  email: string;
-  password?: string;
-};
+import { useAuth } from "../../../context/AuthContext";
+
+// type FieldType = {
+//   email: string;
+//   password?: string;
+// };
 
 const SigninPage = () => {
-  const nav = useNavigate();
-  const [form] = Form.useForm();
+  const { signin } = useAuth();
 
-  const { mutate } = useMutation({
-    mutationFn: async (formData: FieldType) => {
-      const response = await api.post("/signin", formData);
-      return response.data;
-    },
-    onSuccess: (data) => {
-      // Kiểm tra và ghi dữ liệu vào Local Storage
-      console.log("API Response:", data);
-      if (data && data.token && data.user) {
-        const userData = {
-          user: data.user.username || data.user.email,
-          token: data.token,
-          role: data.user.role,
-        };
-        console.log("User Data to Store:", userData);
-        localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("role", JSON.stringify(userData.role));
-        message.success("Signin success!");
-        // Điều hướng dựa trên vai trò người dùng
-        if (userData.role === "admin") {
-          nav("/admin/dashboard");
-        } else {
-          nav("/");
-        }
-      } else {
-        message.error("Invalid response data");
-      }
-    },
-    onError: (error: any) => {
-      console.log("API Error:", error);
-      message.error(error.response?.data?.message || "Signin failed");
-    },
-  });
-
-  const onFinish = (values: FieldType) => {
-    mutate(values);
+  const onFinish = async (values: { email: string; password: string }) => {
+    try {
+      await signin(values.email, values.password);
+      
+    } catch (error) {
+      message.error("Đăng nhập không thành công!");
+    }
   };
+
+  // const { mutate } = useMutation({
+  //   mutationFn: async (formData: FieldType) => {
+  //     const response = await api.post("/signin", formData);
+  //     return response.data;
+  //   },
+  //   onSuccess: (data) => {
+  //     // Kiểm tra và ghi dữ liệu vào Local Storage
+  //     console.log("API Response:", data);
+  //     if (data && data.token && data.user) {
+  //       const userData = {
+          
+  //         user: data.user.username || data.user.email,
+  //         token: data.token,
+  //         role: data.user.role,
+  //       };
+  //       console.log("User Data to Store:", userData);
+  //       localStorage.setItem("user", JSON.stringify(userData));
+  //       localStorage.setItem("role", JSON.stringify(userData.role));
+  //       message.success("Signin success!");
+  //       // Điều hướng dựa trên vai trò người dùng
+  //       if (userData.role === "admin") {
+  //         nav("/admin/dashboard");
+  //       } else {
+  //         nav("/");
+  //       }
+  //     } else {
+  //       message.error("Invalid response data");
+  //     }
+  //   },
+  //   onError: (error: any) => {
+  //     console.log("API Error:", error);
+  //     message.error(error.response?.data?.message || "Signin failed");
+  //   },
+  // });
+
+  // const onFinish = (values: FieldType) => {
+  //   mutate(values);
+  // };
 
   return (
     <div className="background-auth min-h-screen flex items-center justify-center">

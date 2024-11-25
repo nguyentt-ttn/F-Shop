@@ -11,17 +11,15 @@ import SigninPage from './pages/(auth)/signin/page'
 import ProductAdd from './pages/(admin)/dashboard/products/add/page'
 import ProductEdit from './pages/(admin)/dashboard/products/edit/page'
 import PrivateRoute from './pages/(auth)/PrivateRoute/page'
-import AdminCategoriesPage from './pages/(admin)/dashboard/categories/page'
-import CategoryAdd from './pages/(admin)/dashboard/categories/add/page'
-import CategoryEdit from './pages/(admin)/dashboard/categories/edit/page'
 import SignUpPage from './pages/(auth)/signup/page'
 import ProductDetail from './pages/(website)/products/detail/page'
-import ProductListTest from './pages/(website)/test/page'
-import Cart from './pages/(website)/cart/page'
 import RequestPasswordReset from './pages/(auth)/requestPasswordReset/page';
 import ResetPassword from './pages/(auth)/ResetPassword/page'
-
+import CategoryAdd from './pages/(admin)/dashboard/categories/add/page'
+import CartPage from './pages/(website)/cart/page';
+import ProductCard from './pages/(website)/test/Product';
 function App() {
+
   return (
     <>
     <div className="container">
@@ -30,9 +28,10 @@ function App() {
           <Route index element={<HomePage/>} />
           <Route path='products/:id' element={<ProductDetail/>}/>
           <Route path='shop' element={<ShopClientPage/> } />
-          <Route path='test' element={<ProductListTest/>} />
-          <Route path='cart' element={<Cart/>} />
+          <Route path='cart/:userId' element={<CartPage/> } />
+          <Route path='test' element={<ProductCard/> } />
         </Route>
+        
         <Route path='sign-up' element={<SignUpPage/>}/>
         <Route path='sign-in' element={<SigninPage/> } />
         <Route path='request-password-reset' element={<RequestPasswordReset/>} />
@@ -43,9 +42,8 @@ function App() {
           <Route path='products' element={<AdminProductsPage/> } />
           <Route path='products/add' element={<ProductAdd/> } />
           <Route path='products/:id/edit' element={<ProductEdit/> } />
-          <Route path='categories' element={<AdminCategoriesPage/> } />
+          <Route path='categories' element={<CategoryAdd/> } />
           <Route path='categories/add' element={<CategoryAdd/> } />
-          <Route path='categories/:id/edit' element={<CategoryEdit/> } />
 
         </Route>
 

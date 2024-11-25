@@ -5,9 +5,9 @@ import authRouter from './routers/auth';
 import categoryRouter from './routers/category';
 import morgan from 'morgan';
 import 'dotenv/config';
-import cartRouter from './routers/cart';
 import attributeRouter from './routers/attribute';
 import productRouter from './routers/product';
+import cartRouter from './routers/cart';
 
 const app = express()
 app.use(cors({
@@ -22,8 +22,8 @@ app.use(express.json())
 app.use("/api",productRouter)
 app.use("/api",authRouter)
 app.use("/api",categoryRouter)
-app.use("/api",cartRouter)
 app.use("/api",attributeRouter)
+app.use("/api",cartRouter)
 
 
 connectDB()
