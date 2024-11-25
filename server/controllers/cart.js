@@ -14,6 +14,7 @@ import Cart from "../models/cart";
       const products = cart.products.map((item) => ({
         _id: item.productId._id,
         name: item.productId.name,
+        image_urls: item.productId.image_urls,
         price: item.productId.price,
         quantity: item.quantity,
         size: item.size,

@@ -5,6 +5,7 @@ import { message } from 'antd';
 
 interface CartItem {
   _id: string;
+  image_urls: string[];
   name: string;
   price: number;
   quantity: number;
@@ -60,8 +61,8 @@ export const CartProvider = ({ children }: CartProviderProps) => {
       const dataToSend = {
         productId: product._id,  // Đảm bảo rằng product.id tồn tại
         userId: userId,          // userId lấy từ localStorage
-        size: product.size,      // Thêm size nếu có
-        color: product.color,    // Thêm color nếu có
+        size: product.size,      
+        color: product.color,    
       };
   
       console.log("Data to send:", dataToSend);  // In ra dữ liệu trước khi gửi
@@ -87,7 +88,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   // Mutation để xóa sản phẩm khỏi giỏ
   const removeProductMutation = useMutation({
     mutationFn: async ({ userId, productId, size, color }: { userId: string, productId: string, size: string, color: string }) => {
-      // Gửi yêu cầu DELETE đến API
       const res = await api.delete(`/cart/remove`, {
         data: { userId, productId, size, color }
       });

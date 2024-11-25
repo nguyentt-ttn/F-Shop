@@ -94,6 +94,7 @@ const ProductDetail = () => {
     <div>
       <h1>{data.name}</h1>
       <p>Giá: {data.price ? `${data.price} VND` : "Không có thông tin về giá"}</p>
+      <img src={data.image_urls[0]}  />
       <p>
         Mô tả: <span dangerouslySetInnerHTML={{ __html: data.description }} />
       </p>

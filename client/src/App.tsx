@@ -17,7 +17,6 @@ import RequestPasswordReset from './pages/(auth)/requestPasswordReset/page';
 import ResetPassword from './pages/(auth)/ResetPassword/page'
 import CategoryAdd from './pages/(admin)/dashboard/categories/add/page'
 import CartPage from './pages/(website)/cart/page';
-import ProductCard from './pages/(website)/test/Product';
 function App() {
 
   return (
@@ -29,7 +28,6 @@ function App() {
           <Route path='products/:id' element={<ProductDetail/>}/>
           <Route path='shop' element={<ShopClientPage/> } />
           <Route path='cart/:userId' element={<CartPage/> } />
-          <Route path='test' element={<ProductCard/> } />
         </Route>
         
         <Route path='sign-up' element={<SignUpPage/>}/>

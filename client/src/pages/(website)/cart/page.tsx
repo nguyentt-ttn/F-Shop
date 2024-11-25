@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Skeleton, Table, Button, message } from "antd";
+import { Skeleton, Table, Button, message, Image } from "antd";
 import api from "../../../API";
 import { useCart } from "../../../context/CartContext";
 import { AiOutlineDelete, AiOutlineShoppingCart } from "react-icons/ai";
@@ -59,6 +59,12 @@ const CartPage = () => {
   );
 
   const columns = [
+    {
+      title: "Ảnh",
+      key: "image_urls",
+      dataIndex: "image_urls",
+      render: (imageUrls: any) => <Image src={imageUrls[0]} height={160}/>
+    },
     { title: "Tên sản phẩm", dataIndex: "name", key: "name" },
     {
       title: "Số lượng",
@@ -105,7 +111,7 @@ const CartPage = () => {
             />
           </div>
 
-          <div className="w-1/3 bg-gray-100 p-6">
+          <div className="w-1/3 bg-gray-100 p-6 ">
             <h2 className="text-lg font-bold mb-4">Cart Total</h2>
             <span className="border-b border-gray-200 block mb-4"></span>
             <div className="flex justify-between mb-2">
