@@ -5,9 +5,11 @@ import { StatusCodes } from "http-status-codes";
 import Joi from "joi";
 import jwt from "jsonwebtoken";
 import User from "../models/user";
+
 const signupSchema = Joi.object({
   username: Joi.string().min(3).required(),
   email: Joi.string().email().required(),
+
   password: Joi.string().min(6).required(),
   confirmPassword: Joi.string().valid(Joi.ref("password")).required().messages({
     "any.only": "Mật khẩu không khớp",

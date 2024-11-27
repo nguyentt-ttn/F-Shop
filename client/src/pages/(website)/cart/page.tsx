@@ -1,12 +1,13 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Skeleton, Table, Button, message, Image } from "antd";
 import api from "../../../API";
 import { useCart } from "../../../context/CartContext";
 import { AiOutlineDelete, AiOutlineShoppingCart } from "react-icons/ai";
 
 const CartPage = () => {
+  const nav = useNavigate()
   const { userId } = useParams();
   const {
     cart,
@@ -31,9 +32,11 @@ const CartPage = () => {
     enabled: !!userId,
   });
 
+  
+
+
   if (queryLoading || isLoading) return <Skeleton active />;
   if (queryError || error) return <div>Đã xảy ra lỗi khi tải giỏ hàng.</div>;
-
   if (!data || !data.products || data.products.length === 0) {
     return <div>Giỏ hàng của bạn hiện đang trống.</div>;
   }
@@ -46,17 +49,19 @@ const CartPage = () => {
   const handleDecrease = (product: any) => {
     decreaseQuantity(product);
   };
-
   // Hàm xử lý xóa sản phẩm khỏi giỏ
   const handleRemove = (product: any) => {
     removeProduct(product);
   };
-
   // Tính tổng giá trị giỏ hàng
   const totalPrice = data.products.reduce(
     (acc: number, product: any) => acc + product.price * product.quantity,
     0
   );
+  const handleCheckout = () => {
+    nav("/checkout", { state: { cartData: data.products, totalPrice } });
+   
+  };
 
   const columns = [
     {
@@ -122,11 +127,9 @@ const CartPage = () => {
               <span>Total</span>
               <span className="text-red-500 font-bold">{totalPrice.toLocaleString()} VNĐ</span>
             </div>
-            <a href="./payment.html">
-              <button className="w-full bg-white border border-yellow-500 text-yellow-500 font-bold py-2 rounded hover:bg-yellow-600">
+              <button className="w-full bg-white border border-yellow-500 text-yellow-500 font-bold py-2 rounded hover:bg-yellow-600" onClick={handleCheckout} >
                 Checkout
               </button>
-            </a>
           </div>
 
         </div>
@@ -135,3 +138,5 @@ const CartPage = () => {
 };
 
 export default CartPage;
+
+

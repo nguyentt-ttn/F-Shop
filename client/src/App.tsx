@@ -17,6 +17,10 @@ import RequestPasswordReset from './pages/(auth)/requestPasswordReset/page';
 import ResetPassword from './pages/(auth)/ResetPassword/page'
 import CategoryAdd from './pages/(admin)/dashboard/categories/add/page'
 import CartPage from './pages/(website)/cart/page';
+import CheckoutDetail from './pages/(website)/checkout/detail/page'
+import PaymentPage from './pages/(website)/checkout/page'
+import CheckoutList from './pages/(website)/checkout/list/page'
+
 function App() {
 
   return (
@@ -28,8 +32,10 @@ function App() {
           <Route path='products/:id' element={<ProductDetail/>}/>
           <Route path='shop' element={<ShopClientPage/> } />
           <Route path='cart/:userId' element={<CartPage/> } />
+          <Route path="/checkout" element={<PaymentPage />} />
+          <Route path="/checkout-list" element={<CheckoutList />} />
+          <Route path="/checkout/:id" element={<CheckoutDetail />} />
         </Route>
-        
         <Route path='sign-up' element={<SignUpPage/>}/>
         <Route path='sign-in' element={<SigninPage/> } />
         <Route path='request-password-reset' element={<RequestPasswordReset/>} />

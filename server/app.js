@@ -8,8 +8,7 @@ import 'dotenv/config';
 import attributeRouter from './routers/attribute';
 import productRouter from './routers/product';
 import cartRouter from './routers/cart';
-import invoiceRouter from './routers/invoice';
-
+import checkoutRouter from './routers/checkout';
 const app = express()
 app.use(cors({
     origin: '*',          // Cho phép tất cả các origin
@@ -25,7 +24,7 @@ app.use("/api",authRouter)
 app.use("/api",categoryRouter)
 app.use("/api",attributeRouter)
 app.use("/api",cartRouter)
-app.use("/api", invoiceRouter)
+app.use("/api", checkoutRouter)
 
 
 connectDB()
