@@ -38,26 +38,28 @@ const colorMap = {
   Đỏ_đô: "#800000",
   Xanh_than: "#000080",
   Hồng_phấn: "#ffd1dc",
-  Kem: "#fffdd0"
+  Kem: "#fffdd0",
 };
 
 const colorSuggestions = Object.entries(colorMap).map(([name, hex]) => ({
   value: hex,
   label: (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
+    <div style={{ display: "flex", alignItems: "center" }}>
       <div
         style={{
-          width: '20px',
-          height: '20px',
+          width: "20px",
+          height: "20px",
           backgroundColor: hex,
-          marginRight: '8px',
-          border: '1px solid #d9d9d9',
-          borderRadius: '2px'
+          marginRight: "8px",
+          border: "1px solid #d9d9d9",
+          borderRadius: "2px",
         }}
       />
-      <span>{name.replace(/_/g, ' ')} ({hex})</span>
+      <span>
+        {name.replace(/_/g, " ")} ({hex})
+      </span>
     </div>
-  )
+  ),
 }));
 
 const ProductAdd = () => {
@@ -128,8 +130,10 @@ const ProductAdd = () => {
 
   // Helper function to get color name from hex
   const getColorName = (hex: string) => {
-    const entry = Object.entries(colorMap).find(([_, value]) => value.toLowerCase() === hex.toLowerCase());
-    return entry ? entry[0].replace(/_/g, ' ') : hex;
+    const entry = Object.entries(colorMap).find(
+      ([_, value]) => value.toLowerCase() === hex.toLowerCase()
+    );
+    return entry ? entry[0].replace(/_/g, " ") : hex;
   };
 
   // Custom color selection component
@@ -142,7 +146,14 @@ const ProductAdd = () => {
     };
 
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          width: "100%",
+        }}
+      >
         <AutoComplete
           {...props}
           value={value}
@@ -155,48 +166,57 @@ const ProductAdd = () => {
           }}
           options={colorSuggestions}
           filterOption={(inputValue, option) => {
-            const optionValue = option?.value?.toLowerCase() || '';
-            const optionLabel = option?.label?.toString().toLowerCase() || '';
+            const optionValue = option?.value?.toLowerCase() || "";
+            const optionLabel = option?.label?.toString().toLowerCase() || "";
             const searchValue = inputValue.toLowerCase();
-            return optionValue.includes(searchValue) || optionLabel.includes(searchValue);
+            return (
+              optionValue.includes(searchValue) ||
+              optionLabel.includes(searchValue)
+            );
           }}
-          style={{ flex: 1, minWidth: '200px' }}
+          style={{ flex: 1, minWidth: "200px" }}
           dropdownRender={(menu) => (
             <div>
               {menu}
               {value && isValidColor(value) && (
-                <div style={{ padding: '8px', borderTop: '1px solid #e8e8e8' }}>
-                  <div style={{ 
-                    width: '100%', 
-                    height: '24px', 
-                    backgroundColor: value,
-                    border: '1px solid #d9d9d9',
-                    borderRadius: '2px',
-                    marginTop: '4px'
-                  }} />
+                <div style={{ padding: "8px", borderTop: "1px solid #e8e8e8" }}>
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "24px",
+                      backgroundColor: value,
+                      border: "1px solid #d9d9d9",
+                      borderRadius: "2px",
+                      marginTop: "4px",
+                    }}
+                  />
                 </div>
               )}
             </div>
           )}
         />
         {value && isValidColor(value) && (
-          <div style={{ 
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            padding: '4px 8px',
-            background: '#f5f5f5',
-            borderRadius: '4px',
-            minWidth: '120px'
-          }}>
-            <div style={{ 
-              width: '20px', 
-              height: '20px', 
-              backgroundColor: value,
-              border: '1px solid #d9d9d9',
-              borderRadius: '2px'
-            }} />
-            <span style={{ fontSize: '14px' }}>{getColorName(value)}</span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              padding: "4px 8px",
+              background: "#f5f5f5",
+              borderRadius: "4px",
+              minWidth: "120px",
+            }}
+          >
+            <div
+              style={{
+                width: "20px",
+                height: "20px",
+                backgroundColor: value,
+                border: "1px solid #d9d9d9",
+                borderRadius: "2px",
+              }}
+            />
+            <span style={{ fontSize: "14px" }}>{getColorName(value)}</span>
           </div>
         )}
       </div>
@@ -209,7 +229,6 @@ const ProductAdd = () => {
       message.error("Vui lòng tải lên ít nhất một hình ảnh!");
       return;
     }
-
     const product = {
       ...values,
       image_urls: image_urls,
@@ -224,7 +243,6 @@ const ProductAdd = () => {
       <div className="container mx-auto px-4">
         <div className="form-card">
           <h1 className="form-title">Create New Product</h1>
-
           <Form
             form={form}
             name="product-form"
@@ -258,10 +276,7 @@ const ProductAdd = () => {
               >
                 <InputNumber
                   className="w-full custom-input"
-                  formatter={(value) =>
-                    `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                  }
-                  parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
+                  formatter={(value) => `$ ${value}`}
                 />
               </Form.Item>
 
@@ -386,7 +401,9 @@ const ProductAdd = () => {
                                           if (!value || isValidColor(value)) {
                                             return Promise.resolve();
                                           }
-                                          return Promise.reject(new Error("Mã màu không hợp lệ"));
+                                          return Promise.reject(
+                                            new Error("Mã màu không hợp lệ")
+                                          );
                                         },
                                       },
                                     ]}
@@ -461,50 +478,10 @@ const ProductAdd = () => {
               <Editor
                 apiKey="m3o33nrpj98lm1ueo3zwefgum674bex794nb3rzs8c04amvk"
                 init={{
-                  plugins: [
-                    "anchor",
-                    "autolink",
-                    "charmap",
-                    "codesample",
-                    "emoticons",
-                    "image",
-                    "link",
-                    "lists",
-                    "media",
-                    "searchreplace",
-                    "table",
-                    "visualblocks",
-                    "wordcount",
-                    "checklist",
-                    "mediaembed",
-                    "casechange",
-                    "export",
-                    "formatpainter",
-                    "pageembed",
-                    "a11ychecker",
-                    "tinymcespellchecker",
-                    "permanentpen",
-                    "powerpaste",
-                    "advtable",
-                    "advcode",
-                    "editimage",
-                    "advtemplate",
-                    "ai",
-                    "mentions",
-                    "tinycomments",
-                    "tableofcontents",
-                    "footnotes",
-                    "mergetags",
-                    "autocorrect",
-                    "typography",
-                    "inlinecss",
-                    "markdown",
-                    "importword",
-                    "exportword",
-                    "exportpdf",
-                  ],
+                  plugins:
+                    "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
                   toolbar:
-                    "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+                    "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
                   tinycomments_mode: "embedded",
                   tinycomments_author: "Author name",
                   height: 360,

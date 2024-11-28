@@ -43,7 +43,7 @@ const checkoutSchema = new Schema(
         },
         paymentMethod: {
             type: String,
-            enum: ["credit_card", "paypal", "cash_on_delivery"],
+            enum: ["online_payment", "cash_on_delivery"],
             required: true,
         },
         paymentStatus: {
@@ -51,6 +51,18 @@ const checkoutSchema = new Schema(
             enum: ["pending", "paid", "failed"],
             default: "pending",
         },
+
+        transactionId: {
+            type: String,
+          },
+          paymentUrl: {
+            type: String,
+          },
+          paymentResponse: {
+            type: Map, // Lưu phản hồi từ VNPay dưới dạng object
+            of: String,
+          },
+          
         orderStatus: {
             type: String,
             enum: ["pending", "processing", "shipped", "delivered", "cancelled"],

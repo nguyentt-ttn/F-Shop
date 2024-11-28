@@ -1,18 +1,5 @@
 import Checkout from "../models/checkout";
 import Cart from "../models/cart"
-// Tạo đơn thanh toán
-// export const createCheckout = async (req, res) => {
-//     try {
-//         const newCheckout = new Checkout(req.body);
-//         const savedCheckout = await newCheckout.save();
-//         res.status(201).json({
-//             message: "Checkout created successfully",
-//             data: savedCheckout,
-//         });
-//     } catch (err) {
-//         res.status(500).json({ message: "Error creating checkout", error: err.message });
-//     }
-// };
 
 export const createCheckout = async (req, res) => {
     try {

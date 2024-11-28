@@ -77,7 +77,7 @@ const AdminProductPage: React.FC = () => {
       title: "Price ",
       dataIndex: "price",
       key: "price",
-      render: (price: number) => `$${price.toFixed(2)}`,
+      render: (price: number) => `$${price}`,
     },
     {
       title: "Quantity ",

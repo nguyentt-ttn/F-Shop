@@ -62,5 +62,6 @@ export default defineConfig({
         //   'class-validator',
         //   'fastify-swagger',
         // ],
+        exclude: ['crypto']
     },
 });
