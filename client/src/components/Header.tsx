@@ -6,7 +6,6 @@ import {
   AiOutlineShoppingCart,
 } from "react-icons/ai";
 
-
 const Header = () => {
   const userId = localStorage.getItem("userId");
   return (
